@@ -15,48 +15,59 @@
         <script>
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/service-worker.js')
-                    .then(function(registration) {
+                    .then(function (registration) {
                         console.log('Service Worker registriert:', registration.scope);
+
+                        Notification.requestPermission().then(async function (permission) {
+                            if (permission === 'granted') {
+                                try {
+                                    const vapidPublicKey = "{{ config('webpush.vapid.public_key') }}";
+                                    console.log("VAPID PUBLIC KEY:", vapidPublicKey);
+
+                                    const subscription = await registration.pushManager.subscribe({
+                                        userVisibleOnly: true,
+                                        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+                                    });
+
+                                    console.log("SUBSCRIPTION OK", subscription);
+
+                                    const response = await fetch("{{ route('webpush.subscribe') }}", {
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify(subscription)
+                                    });
+
+                                    console.log("SERVER RESPONSE", response.status);
+                                } catch (e) {
+                                    console.error("SUBSCRIBE ERROR", e);
+                                }
+                            } else {
+                                console.log('Benachrichtigungen nicht erlaubt.');
+                            }
+                        });
                     })
-                    .catch(function(error) {
+                    .catch(function (error) {
                         console.error('Service Worker Fehler:', error);
                     });
             }
-        </script>
-        <script>
+
             function urlBase64ToUint8Array(base64String) {
                 const padding = '='.repeat((4 - base64String.length % 4) % 4);
-                const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-                const rawData = window.atob(base64);
+                const base64 = (base64String + padding)
+                    .replace(/-/g, '+')
+                    .replace(/_/g, '/');
+                const rawData = atob(base64);
                 const outputArray = new Uint8Array(rawData.length);
                 for (let i = 0; i < rawData.length; ++i) {
                     outputArray[i] = rawData.charCodeAt(i);
                 }
                 return outputArray;
             }
-
-            Notification.requestPermission().then(function(permission) {
-                if (permission === 'granted') {
-                    navigator.serviceWorker.ready.then(function(registration) {
-                        registration.pushManager.subscribe({
-                            userVisibleOnly: true,
-                            applicationServerKey: urlBase64ToUint8Array("{{ config('webpush.vapid.public_key') }}")
-                        }).then(function(subscription) {
-                            fetch("{{ route('webpush.subscribe') }}", {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify(subscription)
-                            });
-                        });
-                    });
-                } else {
-                    console.log('nö');
-                }
-            });
         </script>
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
