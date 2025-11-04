@@ -13,52 +13,43 @@
 
         <!-- Scripts -->
         <script>
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(function (registration) {
-                        console.log('Service Worker registriert:', registration.scope);
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                navigator.serviceWorker.register('/service-worker.js').then(function(reg) {
+                    console.log("Service Worker registriert:", reg.scope);
 
-                        Notification.requestPermission().then(async function (permission) {
-                            if (permission === 'granted') {
-                                try {
-                                    const vapidPublicKey = "{{ config('webpush.vapid.public_key') }}";
-                                    console.log("VAPID PUBLIC KEY:", vapidPublicKey);
+                    Notification.requestPermission().then(function(permission) {
+                        if (permission !== 'granted') {
+                            console.warn('Push nicht erlaubt');
+                            return;
+                        }
 
-                                    const subscription = await registration.pushManager.subscribe({
-                                        userVisibleOnly: true,
-                                        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
-                                    });
+                        const vapidKey = "{{ config('webpush.vapid.public_key') }}";
+                        console.log("VAPID Key:", vapidKey);
 
-                                    console.log("SUBSCRIPTION OK", subscription);
-
-                                    const response = await fetch("{{ route('webpush.subscribe') }}", {
-                                        method: 'POST',
-                                        headers: {
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify(subscription)
-                                    });
-
-                                    console.log("SERVER RESPONSE", response.status);
-                                } catch (e) {
-                                    console.error("SUBSCRIBE ERROR", e);
-                                }
-                            } else {
-                                console.log('Benachrichtigungen nicht erlaubt.');
-                            }
-                        });
-                    })
-                    .catch(function (error) {
-                        console.error('Service Worker Fehler:', error);
+                        reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: urlBase64ToUint8Array(vapidKey)
+                        })
+                            .then(function(subscription) {
+                                console.log("Subscription erstellt:", subscription);
+                                return fetch("{{ route('webpush.subscribe') }}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(subscription)
+                                });
+                            })
+                            .then(res => console.log("Subscription gespeichert:", res.status))
+                            .catch(err => console.error("Subscription Fehler:", err));
                     });
+                });
             }
 
             function urlBase64ToUint8Array(base64String) {
                 const padding = '='.repeat((4 - base64String.length % 4) % 4);
-                const base64 = (base64String + padding)
-                    .replace(/-/g, '+')
-                    .replace(/_/g, '/');
+                const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
                 const rawData = atob(base64);
                 const outputArray = new Uint8Array(rawData.length);
                 for (let i = 0; i < rawData.length; ++i) {
