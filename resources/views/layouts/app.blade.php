@@ -13,13 +13,26 @@
 
         <!-- Scripts -->
         <script>
+            function urlBase64ToUint8Array(base64String) {
+                const padding = '='.repeat((4 - base64String.length % 4) % 4);
+                const base64 = (base64String + padding)
+                    .replace(/-/g, '+')
+                    .replace(/_/g, '/');
+                const rawData = atob(base64);
+                const outputArray = new Uint8Array(rawData.length);
+                for (let i = 0; i < rawData.length; ++i) {
+                    outputArray[i] = rawData.charCodeAt(i);
+                }
+                return outputArray;
+            }
+
             if ('serviceWorker' in navigator && 'PushManager' in window) {
-                navigator.serviceWorker.register('/service-worker.js').then(function(reg) {
+                navigator.serviceWorker.register('/service-worker.js').then(function (reg) {
                     console.log("Service Worker registriert:", reg.scope);
 
-                    Notification.requestPermission().then(function(permission) {
+                    Notification.requestPermission().then(function (permission) {
                         if (permission !== 'granted') {
-                            console.warn('Push nicht erlaubt');
+                            console.warn('Push-Benachrichtigungen nicht erlaubt');
                             return;
                         }
 
@@ -30,7 +43,7 @@
                             userVisibleOnly: true,
                             applicationServerKey: urlBase64ToUint8Array(vapidKey)
                         })
-                            .then(function(subscription) {
+                            .then(function (subscription) {
                                 console.log("Subscription erstellt:", subscription);
                                 return fetch("{{ route('webpush.subscribe') }}", {
                                     method: 'POST',
@@ -41,23 +54,13 @@
                                     body: JSON.stringify(subscription)
                                 });
                             })
-                            .then(res => console.log("Subscription gespeichert:", res.status))
+                            .then(res => res.text().then(t => console.log("Subscription gespeichert:", res.status, t)))
                             .catch(err => console.error("Subscription Fehler:", err));
                     });
                 });
             }
-
-            function urlBase64ToUint8Array(base64String) {
-                const padding = '='.repeat((4 - base64String.length % 4) % 4);
-                const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-                const rawData = atob(base64);
-                const outputArray = new Uint8Array(rawData.length);
-                for (let i = 0; i < rawData.length; ++i) {
-                    outputArray[i] = rawData.charCodeAt(i);
-                }
-                return outputArray;
-            }
         </script>
+
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>

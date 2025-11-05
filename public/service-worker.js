@@ -1,25 +1,26 @@
-self.addEventListener('push', function(event) {
-    if (!event.data) {
-        console.log('Push event but no data');
-        return;
+self.addEventListener('push', function (event) {
+    let data = {};
+    try {
+        data = event.data ? event.data.json() : {};
+    } catch (e) {
+        data = { title: 'Nachricht', body: event.data.text() };
     }
 
-    const data = event.data.json();
-    const title = data.title || 'NestPlaner';
-    const options = {
-        body: data.body || 'Neue Benachrichtigung',
-        icon: data.icon || '/icon-192x192.png',
-        data: data.data || {},
-        actions: data.actions || []
-    };
+    const title = data.title || 'Benachrichtigung';
+    const body = data.body || 'Keine Details verfügbar';
+    const url = data.url || '/';
 
     event.waitUntil(
-        self.registration.showNotification(title, options)
+        self.registration.showNotification(title, {
+            body: body,
+            icon: '/icon.png',
+            data: { url: url }
+        })
     );
 });
 
-self.addEventListener('notificationclick', function(event) {
+// Klick auf Notification → öffnet Seite
+self.addEventListener('notificationclick', function (event) {
     event.notification.close();
-    const url = event.notification.data.url || '/';
-    event.waitUntil(clients.openWindow(url));
+    event.waitUntil(clients.openWindow(event.notification.data.url));
 });

@@ -11,7 +11,8 @@
         "laravel/framework": "^12.36",
         "laravel/sanctum": "^4.2",
         "laravel/tinker": "^2.10.1",
-        "minishlink/web-push": "^9.0"
+        "minishlink/web-push": "^9.0",
+        "simplesoftwareio/simple-qrcode": "^4.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

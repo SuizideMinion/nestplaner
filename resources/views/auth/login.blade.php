@@ -4,6 +4,9 @@
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
+        @if(session('info'))
+            <div class="alert alert-info">{{ session('info') }}</div>
+        @endif
 
         <!-- Email Address -->
         <div>
