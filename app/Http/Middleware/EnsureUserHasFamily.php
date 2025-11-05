@@ -19,7 +19,7 @@ class EnsureUserHasFamily
 
         // Prüfen, ob User in mindestens einer Familie ist
         if ($user->families()->count() === 0) {
-            return redirect()->route('families.create')
+            return redirect()->route('family.create')
                 ->with('error', 'Du musst zuerst einer Familie beitreten oder eine erstellen.');
         }
 
@@ -30,7 +30,7 @@ class EnsureUserHasFamily
             if ($firstFamily) {
                 session(['active_family_id' => $firstFamily->id]);
             } else {
-                return redirect()->route('families.create')
+                return redirect()->route('family.create')
                     ->with('error', 'Bitte wähle oder erstelle eine Familie.');
             }
         }
