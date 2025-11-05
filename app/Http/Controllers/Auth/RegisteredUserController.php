@@ -61,6 +61,6 @@ class RegisteredUserController extends Controller
                 ->with('success', 'Du wurdest erfolgreich registriert und der Familie beigetreten!');
         }
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect()->route('dashboard');
     }
 }

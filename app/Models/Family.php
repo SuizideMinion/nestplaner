@@ -28,4 +28,9 @@ class Family extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
+
+    public function members()
+    {
+        return $this->belongsToMany(User::class)->withPivot('role')->withTimestamps();
+    }
 }

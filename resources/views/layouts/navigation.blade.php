@@ -97,4 +97,21 @@
             </div>
         </div>
     </div>
+    @if(Auth::check())
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                {{ optional(Auth::user()->families->firstWhere('id', session('active_family_id')))->name ?? 'Familie wählen' }}
+            </button>
+            <ul class="dropdown-menu">
+                @foreach(Auth::user()->families as $family)
+                    <li>
+                        <a class="dropdown-item" href="{{ route('family.switch', $family->id) }}">
+                            {{ $family->name }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
 </nav>
