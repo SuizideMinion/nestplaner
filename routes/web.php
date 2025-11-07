@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/families', [FamilyController::class, 'store'])->name('family.store');
     Route::get('/families/{family}', [FamilyController::class, 'show'])->name('family.show');
     Route::get('/families/{family}/qr', [FamilyController::class, 'qr'])->name('family.qr');
+    Route::post('/families/{family}/members/{user}/role', [App\Http\Controllers\FamilyController::class, 'updateMemberRole'])
+        ->name('family.members.updateRole');
 });
 
 Route::get('/dashboard', function () {

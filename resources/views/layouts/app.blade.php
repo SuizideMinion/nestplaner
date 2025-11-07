@@ -24,6 +24,89 @@
             border-radius: 1rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
+        /* ===============================
+   📱 FullCalendar – Mobile Design
+   =============================== */
+        @media (max-width: 768px) {
+            /* Container */
+            #calendar {
+                font-size: 0.9rem;
+                padding: 0 0.5rem;
+            }
+
+            /* Toolbar / Header */
+            .fc .fc-toolbar.fc-header-toolbar {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            .fc .fc-toolbar-title {
+                font-size: 1.2rem;
+                margin-top: 0.25rem;
+                text-align: center;
+            }
+
+            /* Buttons */
+            .fc-button-group button,
+            .fc .fc-button {
+                padding: 0.3rem 0.6rem !important;
+                font-size: 0.85rem !important;
+                border-radius: 6px;
+            }
+
+            /* Kalender-Zellen */
+            .fc-timegrid-slot {
+                height: 1.6em !important;
+            }
+
+            /* Events kompakter */
+            .fc-event {
+                font-size: 0.8rem !important;
+                line-height: 1.1 !important;
+                border-radius: 6px;
+                padding: 1px 3px !important;
+            }
+
+            /* Week/Day view spacing */
+            .fc-timegrid-axis-frame,
+            .fc-scrollgrid-sync-table {
+                font-size: 0.8rem;
+            }
+
+            /* "No events" Text */
+            .fc-list-empty {
+                font-size: 0.9rem;
+                padding: 0.8rem;
+            }
+
+            /* Tageslistenansicht */
+            .fc-list-table td {
+                padding: 0.3rem 0.5rem !important;
+            }
+
+            /* Heute-Button fix am unteren Rand (optional) */
+            .floating-today-btn {
+                position: fixed;
+                bottom: 1.2rem;
+                right: 1.2rem;
+                z-index: 1000;
+                background-color: #2563eb;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 48px;
+                height: 48px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+            }
+            .floating-today-btn:hover {
+                background-color: #1d4ed8;
+            }
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">

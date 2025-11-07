@@ -27,7 +27,14 @@
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: ''//'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                // 🔹 Ansicht umschalten bei Fenstergröße
+                windowResize: function() {
+                    const newView = window.innerWidth < 768 ? 'listWeek' : 'timeGridWeek';
+                    if (calendar.view.type !== newView) {
+                        calendar.changeView(newView);
+                    }
                 },
 
                 select: function(info) {

@@ -24,7 +24,19 @@
             @foreach($family->users as $user)
                 <tr>
                     <td>{{ $user->name }}</td>
-                    <td>{{ ucfirst($user->pivot->role) }}</td>
+                    <td>
+                        <form action="{{ route('family.members.updateRole', [$family->id, $user->id]) }}" method="POST" class="d-flex align-items-center">
+                            @csrf
+                            <select name="role" class="form-select form-select-sm me-2" onchange="this.form.submit()">
+                                @foreach(['parent' => 'Elternteil', 'child' => 'Kind', 'guest' => 'Gast'] as $value => $label)
+                                    <option value="{{ $value }}" {{ $user->pivot->role === $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
+                    </td>
+
                     <td>{{ $user->pivot->created_at->format('d.m.Y H:i') }}</td>
                 </tr>
             @endforeach

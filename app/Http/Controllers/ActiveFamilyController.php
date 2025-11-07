@@ -17,6 +17,9 @@ class ActiveFamilyController extends Controller
 
         session(['active_family_id' => $familyId]);
 
+        $user = auth()->user();
+        $user->update(['last_family_id' => $familyId]);
+
         return back()->with('success', 'Aktive Familie gewechselt.');
     }
 }

@@ -3,15 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Family;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // 👈 hinzufügen
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
+// 👈 hinzufügen
 
 class FamilyController extends Controller
 {
-    use AuthorizesRequests; // 👈 Trait aktivieren
+    use AuthorizesRequests;
+
+    // 👈 Trait aktivieren
 
     public function index()
     {
@@ -77,5 +82,30 @@ class FamilyController extends Controller
 
         return view('family.qr', compact('family', 'qr', 'url'));
     }
+
+    public function updateMemberRole(Request $request, $familyId, $userId)
+    {
+        $family = Family::findOrFail($familyId);
+        $user = $family->users()->where('user_id', $userId)->firstOrFail();
+
+        // Sicherheitsprüfung: nur Admins oder Eltern dürfen ändern
+        if (!auth()->user()->families()
+            ->where('family_id', $familyId)
+//            ->wherePivot('role', 'admin')
+            ->exists()) {
+            return back()->with('error', 'Nur Familien-Administratoren dürfen Rollen ändern.');
+        }
+
+        $request->validate([
+            'role' => 'required|string|in:admin,parent,child,guest',
+        ]);
+
+        $family->users()->updateExistingPivot($userId, [
+            'role' => $request->input('role')
+        ]);
+
+        return back()->with('success', "{$user->name} ist jetzt {$request->role}.");
+    }
+
 
 }

@@ -36,6 +36,7 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
+        $user = $request->user();
         $request->session()->regenerate();
 
         // 🔗 Prüfen, ob ein Einladungscode existiert
@@ -48,8 +49,11 @@ class AuthenticatedSessionController extends Controller
             }
 
             session()->forget('invite_code');
+            session(['active_family_id' => $family->id]);
             return redirect()->route('family.show', $family)
                 ->with('success', 'Du bist der Familie beigetreten!');
+        } elseif ($user->last_family_id) {
+            session(['active_family_id' => $user->last_family_id]);
         }
 
         return redirect()->intended(route('dashboard'));
