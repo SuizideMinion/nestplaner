@@ -4,6 +4,7 @@ use App\Http\Controllers\ActiveFamilyController;
 use App\Http\Controllers\Admin\HolidayController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\FamilyController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecurringEventController;
 use App\Models\User;
@@ -15,6 +16,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/files', [FileController::class, 'index'])->name('files.index');
+    Route::post('/files/folders', [FileController::class, 'storeFolder'])->name('files.storeFolder');
+    Route::post('/files/{folder}/upload', [FileController::class, 'upload'])->name('files.upload');
+    Route::get('/files/download/{file}', [FileController::class, 'download'])->name('files.download');
+    Route::delete('/files/{file}', [FileController::class, 'destroy'])->name('files.destroy');
 });
 
 Route::middleware('auth')->group(function () {

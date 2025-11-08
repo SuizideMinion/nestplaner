@@ -123,6 +123,9 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 @auth
+                    <li><a class="dropdown-item" href="{{ route('calendar.index') }}"><i class="bi bi-calendar-event"></i></a></li>
+                    <li><a class="dropdown-item" href="{{ route('files.index') }}"><i class="bi bi-folder"></i></a></li>
+
                     {{-- Familien-Auswahl --}}
                     @if(Auth::user()->families->count() > 0)
                         <li class="nav-item dropdown me-3">
@@ -178,7 +181,6 @@
 
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-                            <li><a class="dropdown-item" href="{{ route('calendar.index') }}"><i class="bi bi-calendar-event"></i> Kalender</a></li>
                             <li><a class="dropdown-item" href="{{ route('family.index') }}"><i class="bi bi-people"></i> Familien</a></li>
                             <li><a class="dropdown-item" href="{{ route('recurring.index') }}"><i class="bi bi-stars"></i> Events</a></li>
                             <li><a class="dropdown-item" href="{{ route('notes.index') }}"><i class="bi bi-journal-text"></i> Tagebuch</a></li>

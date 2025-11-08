@@ -7,18 +7,20 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('file_folders', function (Blueprint $table) {
+        Schema::create('family_files', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('family_id')->constrained()->onDelete('cascade');
+            $table->foreignId('folder_id')->constrained('file_folders')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->enum('visibility', ['all', 'parents', 'owner'])->default('all');
+            $table->string('filename');
+            $table->string('original_name');
+            $table->string('mime_type');
+            $table->bigInteger('size');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('file_folders');
+        Schema::dropIfExists('family_files');
     }
 };
