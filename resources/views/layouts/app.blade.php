@@ -14,14 +14,63 @@
         body {
             background: #f8fafc;
         }
+
         .navbar-brand {
             font-weight: 600;
             color: #2c3e50 !important;
         }
+
         .card {
             border-radius: 1rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
+        .nav-icon-link {
+            border: none;
+            transition: all 0.25s ease;
+            border-radius: 8px;
+        }
+
+        .nav-icon-link:hover {
+            background-color: #eef4ff;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Text */
+        .nav-label {
+            font-size: 0.8rem;
+        }
+
+        /* Tooltip aus auf Mobile */
+        @media (max-width: 768px) {
+            [data-bs-toggle="tooltip"] {
+                pointer-events: none !important;
+            }
+        }
+
+        .nav-link-fix {
+            text-decoration: none;
+            transition: all 0.25s ease;
+            border-color: #e5e7eb;
+        }
+
+        .nav-link-fix:hover {
+            background-color: #eef4ff;
+            transform: translateY(-1px);
+        }
+
+        /* Tooltip auf Mobile deaktivieren */
+        @media (max-width: 768px) {
+            [data-bs-toggle="tooltip"] {
+                pointer-events: none !important;
+            }
+        }
+
+        /* Wichtig: verhindert dass Dropdown-Overlay Klicks blockiert */
+        .navbar-collapse.show {
+            pointer-events: auto !important;
+        }
+
+
         /* ===============================
    📱 FullCalendar – Mobile Design
    =============================== */
@@ -101,6 +150,7 @@
                 justify-content: center;
                 font-size: 1.2rem;
             }
+
             .floating-today-btn:hover {
                 background-color: #1d4ed8;
             }
@@ -123,8 +173,25 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 @auth
-                    <li><a class="dropdown-item" href="{{ route('calendar.index') }}"><i class="bi bi-calendar-event"></i></a></li>
-                    <li><a class="dropdown-item" href="{{ route('files.index') }}"><i class="bi bi-folder"></i></a></li>
+                    <li class="nav-item me-2">
+                        <a href="{{ route('calendar.index') }}"
+                           class="d-flex align-items-center gap-2 px-3 py-2 rounded shadow-sm bg-white border nav-link-fix"
+                           title="Kalender">
+                            <i class="bi bi-calendar-event text-primary fs-5"></i>
+                            <span class="d-md-none small text-muted">Kalender</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item me-2">
+                        <a href="{{ route('files.index') }}"
+                           class="d-flex align-items-center gap-2 px-3 py-2 rounded shadow-sm bg-white border nav-link-fix"
+                           title="Dateien">
+                            <i class="bi bi-folder text-warning fs-5"></i>
+                            <span class="d-md-none small text-muted">Dateien</span>
+                        </a>
+                    </li>
+
+
 
                     {{-- Familien-Auswahl --}}
                     @if(Auth::user()->families->count() > 0)
@@ -152,7 +219,9 @@
                                         </a>
                                     </li>
                                 @endforeach
-                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li>
                                     <a class="dropdown-item text-success" href="{{ route('family.create') }}">
                                         <i class="bi bi-plus-circle"></i> Neue Familie erstellen
@@ -180,11 +249,17 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-                            <li><a class="dropdown-item" href="{{ route('family.index') }}"><i class="bi bi-people"></i> Familien</a></li>
-                            <li><a class="dropdown-item" href="{{ route('recurring.index') }}"><i class="bi bi-stars"></i> Events</a></li>
-                            <li><a class="dropdown-item" href="{{ route('notes.index') }}"><i class="bi bi-journal-text"></i> Tagebuch</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('dashboard') }}"><i
+                                        class="bi bi-speedometer2"></i> Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ route('family.index') }}"><i class="bi bi-people"></i>
+                                    Familien</a></li>
+                            <li><a class="dropdown-item" href="{{ route('recurring.index') }}"><i
+                                        class="bi bi-stars"></i> Events</a></li>
+                            <li><a class="dropdown-item" href="{{ route('notes.index') }}"><i
+                                        class="bi bi-journal-text"></i> Tagebuch</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -233,6 +308,23 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tooltips aktivieren (Desktop only)
+        if (window.innerWidth >= 768) {
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
+        }
+
+        // Sicherstellen, dass Links auf Mobile immer reagieren
+        document.querySelectorAll('.nav-link-fix').forEach(link => {
+            link.addEventListener('touchstart', () => link.classList.add('active'), { passive: true });
+            link.addEventListener('touchend', () => link.classList.remove('active'));
+        });
+    });
+</script>
 
 
 </body>

@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/uploadtest', function() {
+    $path = Storage::disk('public')->put('family_files/test.txt', 'Hallo NestPlaner!');
+    return $path ? '✅ Upload funktioniert' : '❌ Fehler beim Schreiben';
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/files', [FileController::class, 'index'])->name('files.index');
