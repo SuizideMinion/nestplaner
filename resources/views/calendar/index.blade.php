@@ -37,6 +37,22 @@
                             <label for="eventColor" class="form-label">Farbe (optional)</label>
                             <input type="color" class="form-control form-control-color" id="eventColor" value="#3788d8">
                         </div>
+                        <div class="mb-3">
+                            <label for="eventRecurring" class="form-label">Wiederholung</label>
+                            <select class="form-select" id="eventRecurring">
+                                <option value="none" selected>Keine</option>
+                                <option value="daily">Täglich</option>
+                                <option value="weekly">Wöchentlich</option>
+                                <option value="monthly">Monatlich</option>
+                                <option value="yearly">Jährlich</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 recurrence-date d-none">
+                            <label for="eventRecurrenceDate" class="form-label">Wiederholung bis (optional)</label>
+                            <input type="date" class="form-control" id="eventRecurrenceDate">
+                        </div>
+
                         <button type="submit" class="btn btn-success w-100">Speichern</button>
                     </form>
                 </div>
@@ -49,6 +65,17 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
     <script>
+        // Dropdown-Änderung überwachen
+        // Zeigt das "Wiederholung bis"-Datum nur bei Wiederholungen an
+        document.getElementById('eventRecurring').addEventListener('change', function() {
+            const dateContainer = document.querySelector('.recurrence-date');
+            if (this.value === 'none') {
+                dateContainer.classList.add('d-none');
+            } else {
+                dateContainer.classList.remove('d-none');
+            }
+        });
+
         // Wenn das Modal geöffnet wird → aktuelle Zeit eintragen
         document.getElementById('addEventModal').addEventListener('show.bs.modal', function () {
             const now = new Date();
@@ -78,6 +105,8 @@
             const start = document.getElementById('eventStart').value;
             const end = document.getElementById('eventEnd').value;
             const color = document.getElementById('eventColor').value;
+            const recurrence_type = document.getElementById('eventRecurring').value;
+            const recurrence_date = document.getElementById('eventRecurrenceDate').value;
 
             if (!title || !start) {
                 alert('Bitte mindestens Titel und Startzeit eingeben.');
@@ -96,6 +125,9 @@
                         start,
                         end,
                         color,
+                        is_recurring: recurrence_type !== 'none',
+                        recurrence_type: recurrence_type === 'none' ? null : recurrence_type,
+                        recurrence_date: recurrence_date || null,
                     }),
                 });
 

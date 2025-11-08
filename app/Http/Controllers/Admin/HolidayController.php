@@ -33,8 +33,6 @@ class HolidayController extends Controller
         foreach ($response->json() as $holiday) {
             CalendarEvent::updateOrCreate([
                 'title' => $holiday['localName'],
-                'recurrence_date' => $holiday['date'],
-                'recurrence_type' => 'yearly',
                 'is_recurring' => true,
                 'family_id' => null, // global für alle
             ], [
