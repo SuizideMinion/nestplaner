@@ -17,6 +17,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::middleware('auth')->group(function () {
+    Route::post('/notes/{id}/comments', [\App\Http\Controllers\NoteController::class, 'addComment'])->name('notes.comment');
+    Route::get('/notes/{note}', [\App\Http\Controllers\NoteController::class, 'show'])->name('notes.show');
+    Route::post('/notes/{note}/comments', [\App\Http\Controllers\NoteCommentController::class, 'store'])->name('notes.comments.store');
+    Route::delete('/comments/{comment}', [\App\Http\Controllers\NoteCommentController::class, 'destroy'])->name('comments.destroy');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/notes', [\App\Http\Controllers\NoteController::class, 'index'])->name('notes.index');
+    Route::post('/notes', [\App\Http\Controllers\NoteController::class, 'store'])->name('notes.store');
+    Route::delete('/notes/{note}', [\App\Http\Controllers\NoteController::class, 'destroy'])->name('notes.destroy');
+});
+
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('holidays', [HolidayController::class, 'index'])->name('admin.holidays.index');
     Route::post('holidays/import', [HolidayController::class, 'import'])->name('admin.holidays.import');

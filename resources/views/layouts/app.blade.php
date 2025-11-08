@@ -10,8 +10,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     <style>
         body {
             background: #f8fafc;
@@ -128,11 +126,18 @@
                     {{-- Familien-Auswahl --}}
                     @if(Auth::user()->families->count() > 0)
                         <li class="nav-item dropdown me-3">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle"
+                               href="#"
+                               id="familyDropdown"
+                               role="button"
+                               data-bs-toggle="dropdown"
+                               data-bs-auto-close="outside"
+                               aria-expanded="false">
                                 <i class="bi bi-people-fill text-primary"></i>
                                 {{ optional(Auth::user()->families->firstWhere('id', session('active_family_id')))->name ?? 'Familie wählen' }}
                             </a>
-                            <ul class="dropdown-menu">
+
+                            <ul class="dropdown-menu" aria-labelledby="familyDropdown">
                                 @foreach(Auth::user()->families as $family)
                                     <li>
                                         <a class="dropdown-item {{ session('active_family_id') == $family->id ? 'active' : '' }}"
@@ -161,14 +166,22 @@
 
                     {{-- Benutzer Dropdown --}}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           id="userDropdown"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           data-bs-auto-close="outside"
+                           aria-expanded="false">
                             <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
                             <li><a class="dropdown-item" href="{{ route('calendar.index') }}"><i class="bi bi-calendar-event"></i> Kalender</a></li>
                             <li><a class="dropdown-item" href="{{ route('family.index') }}"><i class="bi bi-people"></i> Familien</a></li>
-                            <li><a class="dropdown-item" href="{{ route('recurring.index') }}"><i class="bi bi-people"></i> Events</a></li>
+                            <li><a class="dropdown-item" href="{{ route('recurring.index') }}"><i class="bi bi-stars"></i> Events</a></li>
+                            <li><a class="dropdown-item" href="{{ route('notes.index') }}"><i class="bi bi-journal-text"></i> Tagebuch</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
@@ -180,10 +193,12 @@
                             </li>
                         </ul>
                     </li>
+
                 @else
                     <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Registrieren</a></li>
                 @endauth
+
             </ul>
         </div>
     </div>
@@ -216,6 +231,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 
 </body>
 </html>
